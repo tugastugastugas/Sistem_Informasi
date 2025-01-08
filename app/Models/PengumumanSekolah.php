@@ -18,6 +18,7 @@ class PengumumanSekolah extends Authenticatable
     protected $fillable = [
         'id_user',
         'judul_pengumuman_sekolah',
+        'file_pengumuman_sekolah',
         'isi_pengumuman',
         'tgl_buat',
         'created_at',

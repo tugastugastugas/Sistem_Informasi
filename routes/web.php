@@ -117,3 +117,7 @@ Route::delete('/kelas/{id_kelas}', [KelasController::class, 'kelas_destroy'])->n
 Route::post('/murid/store', [KelasController::class, 'murid_store'])->name('murid.store');
 Route::get('/kelas/{id}/murid', [KelasController::class, 'getMuridByKelas']);
 Route::delete('/murid/{id}/hapus', [KelasController::class, 'hapusMurid'])->name('murid.hapus');
+
+
+// ROUTE SHARE
+Route::post('/send-email', [PengumumanSekolahController::class, 'sendEmail']);

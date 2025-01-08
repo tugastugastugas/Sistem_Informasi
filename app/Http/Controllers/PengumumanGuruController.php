@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\ActivityLog;
 use App\Models\Kelas;
+use App\Models\Jurusan;
 use App\Models\PengumumanGuru;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ class PengumumanGuruController extends BaseController
             ->select(
                 'user.username',
                 'pengumuman_guru.judul_pengumuman_guru',
+                'pengumuman_guru.file_pengumuman_guru',
                 'pengumuman_guru.isi_pengumuman',
                 'pengumuman_guru.tgl_buat',
                 'pengumuman_guru.id_pengumuman_guru',
@@ -39,9 +41,12 @@ class PengumumanGuruController extends BaseController
             )
             ->get();
 
+            $jurusan = Jurusan::all(); // Ambil semua jurusan
+            $kelas = Kelas::all();    
+
         echo view('header');
         echo view('menu');
-        echo view('pengumuman_terpilih', compact('pengumuman'));
+        echo view('pengumuman_terpilih', compact('pengumuman', 'jurusan', 'kelas'));
         echo view('footer');
     }
 
@@ -53,6 +58,7 @@ class PengumumanGuruController extends BaseController
             'action' => 'create',
             'user_id' => Session::get('id'), // ID pengguna yang sedang login
             'description' => 'User Membuat Pengumuman Terpilih.',
+            'file_pengumuman_guru' => 'nullable|file|mimes:pdf,doc,docx,txt,jpg,jpeg,png|max:10240',
         ]);
 
         try {
@@ -71,6 +77,12 @@ class PengumumanGuruController extends BaseController
             $pengumuman_guru->tgl_buat = Carbon::now();
             $pengumuman_guru->id_user = $id_user;
 
+            if ($request->hasFile('file_pengumuman_guru')) {
+                $file = $request->file('file_pengumuman_guru');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->move(public_path('uploads'), $fileName);
+                $pengumuman_guru->file_pengumuman_guru = $fileName;
+            }
            
             // Simpan ke database
             $pengumuman_guru->save();
@@ -86,34 +98,96 @@ class PengumumanGuruController extends BaseController
         }
     }
 
-     public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id)
+{
+    Log::info('Update Pengumuman Request', [
+        'all_data' => $request->all(),
+        'route_id' => $id
+    ]);
+
+    try {
+        // Catat aktivitas user
         ActivityLog::create([
             'action' => 'create',
             'user_id' => Session::get('id'), // ID pengguna yang sedang login
             'description' => 'User Mengatur Pengumuman Terpilih.',
         ]);
+        Log::info('Activity Log berhasil dibuat.');
+
         // Validasi input
-        try {
-        $request->validate([
+        $validatedData = $request->validate([
+            'id_pengumuman_guru' => 'required|exists:pengumuman_guru,id_pengumuman_guru',
             'judul_pengumuman_guru' => 'required|string|max:255',
             'isi_pengumuman' => 'required|string',
+            'file_pengumuman_guru' => 'nullable|file|mimes:pdf,doc,docx,txt,jpg,jpeg,png|max:10240',
         ]);
+        Log::info('Validasi input berhasil.', ['validated_data' => $validatedData]);
 
         // Cari pengumuman berdasarkan ID
-        $pengumuman = PengumumanGuru::findOrFail($id);
+        $pengumuman = PengumumanGuru::findOrFail($request->input('id_pengumuman_guru'));
+        Log::info('Pengumuman ditemukan.', ['pengumuman' => $pengumuman]);
 
-        // Update data
-        $pengumuman->judul_pengumuman_guru = $request->judul_pengumuman_guru;
-        $pengumuman->isi_pengumuman = $request->isi_pengumuman;
-        $pengumuman->save();
-        return redirect()->back()->with('success', 'Folder berhasil ditambahkan.');
-        
-        } catch (\Exception $e) {
-            Log::error('Gagal menyimpan surat: ' . $e->getMessage());
-        return redirect()->route('pengumuman_terpilih')->with('success', 'Pengumuman berhasil diperbarui.');
+        // Update data teks
+        $pengumuman->judul_pengumuman_guru = $request->input('judul_pengumuman_guru');
+        $pengumuman->isi_pengumuman = $request->input('isi_pengumuman');
+        Log::info('Data teks berhasil diupdate.');
+
+        // Proses upload file jika ada
+        if ($request->hasFile('file_pengumuman_guru')) {
+            $file = $request->file('file_pengumuman_guru');
+            Log::info('File baru ditemukan.', ['file' => $file->getClientOriginalName()]);
+
+            // Hapus file lama jika ada
+            if ($pengumuman->file_pengumuman_guru) {
+                $oldFilePath = public_path('uploads/' . $pengumuman->file_pengumuman_guru);
+                if (file_exists($oldFilePath)) {
+                    Log::info("File lama ditemukan: $oldFilePath");
+                    if (unlink($oldFilePath)) {
+                        Log::info("File lama berhasil dihapus.");
+                    } else {
+                        Log::warning("Gagal menghapus file lama: $oldFilePath");
+                    }
+                } else {
+                    Log::warning("File lama tidak ditemukan: $oldFilePath");
+                }
+            }
+
+            // Generate nama file baru
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            Log::info('Nama file baru dibuat.', ['file_name' => $fileName]);
+
+            // Pindahkan file
+            $file->move(public_path('uploads'), $fileName);
+            Log::info('File berhasil diupload.', ['path' => public_path('uploads/' . $fileName)]);
+
+            // Update nama file
+            $pengumuman->file_pengumuman_guru = $fileName;
         }
+
+        // Simpan pengumuman
+        $pengumuman->save();
+        Log::info('Data pengumuman berhasil disimpan.', ['pengumuman' => $pengumuman]);
+
+        return redirect()->back()->with('success', 'Pengumuman berhasil diperbarui.');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::error('Validasi input gagal.', [
+            'errors' => $e->validator->errors(),
+            'input' => $request->all()
+        ]);
+        return redirect()->back()->withErrors($e->validator->errors());
+    } catch (\Exception $e) {
+        Log::error('Error Update Pengumuman.', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'input' => $request->all()
+        ]);
+
+        return redirect()->back()->withErrors([
+            'unexpected' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ]);
     }
+}
+
 
 
     public function pengumuman_guru_destroy($id)

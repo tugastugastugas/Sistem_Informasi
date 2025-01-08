@@ -18,6 +18,7 @@ class PengumumanGuru extends Authenticatable
     protected $fillable = [
         'id_user',
         'judul_pengumuman_guru',
+        'file_pengumuman_guru',
         'isi_pengumuman',
         'tgl_buat',
         'id_kelas',
