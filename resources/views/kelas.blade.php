@@ -35,6 +35,12 @@
                                         data-nama_jurusan="{{ $sm->nama_jurusan }}">
                                         Detail
                                     </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm tambah-murid"
+                                        data-bs-toggle="modal" data-bs-target="#tambahMuridModal"
+                                        data-id_kelas="{{ $sm->id_kelas }}"
+                                        data-nama_kelas="{{ $sm->nama_kelas }}">
+                                        Tambah Murid
+                                    </button>
                                     <form action="{{ route('kelas.destroy', $sm->id_kelas) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
@@ -74,9 +80,15 @@
                         <label for="nama_kelas" class="form-label">Nama Kelas</label>
                         <input type="text" class="form-control" id="nama_kelas" name="nama_kelas" required>
                     </div>
+                        <label for="jurusan" class="form-label">Jurusan</label>
                     <div class="mb-3">
-                        <label for="nama_jurusan" class="form-label">Nama Jurusan</label>
-                        <input type="text" class="form-control" id="nama_jurusan" name="nama_jurusan" required>
+                        <label for="jurusan" class="form-label">Pilih Jurusan</label>
+                    <select class="form-control" id="jurusan" name="jurusan">
+                        <option value="" selected disabled>Pilih jurusan</option>
+                        @foreach($jurusan as $item)
+                            <option value="{{ $item->id_jurusan }}">{{ $item->nama_jurusan }}</option>
+                        @endforeach
+                    </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
@@ -87,7 +99,7 @@
 
 <!-- Modal untuk edit pengumuman -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="max-width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">Edit Kelas</h5>
@@ -97,22 +109,93 @@
                 <form action="" method="POST" id="editForm">
                     @csrf
                     @method('PUT')
-                    <!-- Ganti GET dengan POST -->
                     <input type="hidden" name="id_kelas" id="edit-id_kelas">
                     <div class="mb-3">
                         <label for="edit-nama_kelas" class="form-label">Nama Kelas</label>
                         <input type="text" class="form-control" id="edit-nama_kelas" name="nama_kelas" required>
                     </div>
+
+                    <label for="jurusan" class="form-label">Jurusan</label>
                     <div class="mb-3">
-                        <label for="edit-nama_jurusan" class="form-label">Nama Jurusan</label>
-                        <input type="text" class="form-control" id="edit-nama_jurusan" name="nama_jurusan" required>
+                        <label for="jurusan" class="form-label">Pilih Jurusan</label>
+                    <select class="form-control" id="jurusan" name="jurusan">
+                        <option value="" selected disabled>Pilih jurusan</option>
+                        @foreach($jurusan as $item)
+                            <option value="{{ $item->id_jurusan }}">{{ $item->nama_jurusan }}</option>
+                        @endforeach
+                    </select>
+                    </div>  
+
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </form>
+                <hr>
+                <h5>Daftar Murid</h5>
+                <table class="table table-striped" id="muridTable">
+                    <thead>
+                        <tr>
+                            <th>Nama Murid</th>
+                            <th>Email Murid</th>
+                            <th>Telepon Murid</th>
+                            <th>Email Ortu</th>
+                            <th>Telepon Ortu</th>
+                            <th>Aksi</th> <!-- Kolom untuk aksi Hapus -->
+                        </tr>
+                    </thead>
+                    <tbody id="muridTableBody">
+                        <!-- Data murid akan dimasukkan di sini -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="tambahMuridModal" tabindex="-1" aria-labelledby="tambahMuridModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tambahMuridModalLabel">Tambah Murid ke Kelas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('murid.store') }}" method="POST" id="tambahMuridForm">
+                    @csrf
+                    <input type="hidden" name="id_kelas" id="id_kelas">
+                    <div id="murid-container">
+                        <div class="murid-form">
+                            <div class="mb-3">
+                                <label for="nama_murid[]" class="form-label">Nama Murid</label>
+                                <input type="text" class="form-control" id="nama_murid[]" name="nama_murid[]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email_murid[]" class="form-label">Email Murid</label>
+                                <input type="text" class="form-control" id="email_murid[]" name="email_murid[]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email_ortu[]" class="form-label">Email Ortu</label>
+                                <input type="text" class="form-control" id="email_ortu[]" name="email_ortu[]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nohp_murid[]" class="form-label">NoHp Murid</label>
+                                <input type="text" class="form-control" id="nohp_murid[]" name="nohp_murid[]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nohp_ortu[]" class="form-label">NoHp Ortu</label>
+                                <input type="text" class="form-control" id="nohp_ortu[]" name="nohp_ortu[]" required>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
+                    <button type="button" class="btn btn-secondary" id="addMuridForm">Tambah Form</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <!-- JavaScript untuk Mengisi Data di Modal -->
@@ -193,8 +276,8 @@
     });
 });
 </script>
+
 <script>
-   
     $(document).on('click', '.edit-barang', function() {
         // Ambil data dari atribut tombol Edit
         let id_jurusan = $(this).data('id_jurusan');
@@ -208,6 +291,70 @@
         // Isi nilai input di modal edit dengan id yang benar
         $('#edit-nama_jurusan').val(nama_jurusan);
         $('#edit-nama_kelas').val(nama_kelas);
+
+        // Bersihkan tabel murid
+        $('#muridTableBody').html('');
+
+        // Ambil data murid via AJAX
+        fetch(`/kelas/${id_kelas}/murid`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(murid => {
+                    const row = `
+                        <tr>
+                            <td>${murid.nama_murid}</td>
+                            <td>${murid.email_murid}</td>
+                            <td>${murid.nohp_murid}</td>
+                            <td>${murid.email_ortu}</td>
+                            <td>${murid.nohp_ortu}</td>
+                            <td>
+                                       <form action="/murid/${murid.id_murid}/hapus" method="POST" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn btn-outline-danger btn-sm" type="submit">Hapus</button>
+                        </form>
+                               
+                            </td>
+                        </tr>
+                    `;
+                    $('#muridTableBody').append(row);
+                });
+            })
+            .catch(error => console.error('Error fetching murid:', error));
     });
+
+    // Event listener untuk tombol hapus murid
+   
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const addMuridFormButton = document.getElementById('addMuridForm');
+    const muridContainer = document.getElementById('murid-container');
+    const idKelasInput = document.getElementById('id_kelas');
+
+
+    document.querySelectorAll('.tambah-murid').forEach(button => {
+        button.addEventListener('click', function () {
+            const idKelas = this.getAttribute('data-id_kelas');
+            idKelasInput.value = idKelas;
+        });
+    });
+
+    addMuridFormButton.addEventListener('click', function () {
+        // Ambil elemen form terakhir
+        const lastForm = muridContainer.querySelector('.murid-form:last-child');
+        // Klon elemen tersebut
+        const newForm = lastForm.cloneNode(true);
+
+        // Reset nilai input pada form baru
+        newForm.querySelectorAll('input').forEach(input => input.value = '');
+
+        // Tambahkan form baru ke container
+        muridContainer.appendChild(newForm);
+    });
+});
+
 
 </script>

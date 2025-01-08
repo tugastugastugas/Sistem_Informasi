@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\ActivityLog;
 use App\Models\Kelas;
+use App\Models\Jurusan;
 use App\Models\PengumumanSekolah;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
@@ -38,10 +39,12 @@ class PengumumanSekolahController extends BaseController
                 'pengumuman_sekolah.id_user',
             )
             ->get();
+        $jurusan = Jurusan::all(); // Ambil semua jurusan
+        $kelas = Kelas::all();
 
         echo view('header');
         echo view('menu');
-        echo view('pengumuman_sekolah', compact('pengumuman'));
+        echo view('pengumuman_sekolah', compact('pengumuman', 'jurusan', 'kelas'));
         echo view('footer');
     }
 

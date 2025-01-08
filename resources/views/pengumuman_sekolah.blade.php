@@ -63,6 +63,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal untuk membuat pengumuman -->
 <div class="modal fade" id="folderModal" tabindex="-1" aria-labelledby="folderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -101,22 +102,78 @@
                 <form action="" method="POST" id="editForm">
                     @csrf
                     @method('PUT')
-                    <!-- Ganti GET dengan POST -->
                     <input type="hidden" name="id_pengumuman_sekolah" id="edit-id_pengumuman_sekolah">
+
                     <div class="mb-3">
                         <label for="edit-judul_pengumuman_sekolah" class="form-label">Judul Pengumuman</label>
                         <input type="text" class="form-control" id="edit-judul_pengumuman_sekolah" name="judul_pengumuman_sekolah" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="edit-isi_pengumuman" class="form-label">Isi Pengumuman</label>
                         <input type="text" class="form-control" id="edit-isi_pengumuman" name="isi_pengumuman" required>
                     </div>
+                    
                     <button type="submit" class="btn btn-primary">Simpan</button>
-                </form>
+                    </form>
+
+                    <div class="mb-3">
+                        <label class="form-label">Jurusan</label>
+                        <div>
+                            @foreach ($jurusan as $j)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="jurusan-{{ $j->id }}" name="jurusan[]" value="{{ $j->id }}">
+                                    <label class="form-check-label" for="jurusan-{{ $j->id }}">
+                                        {{ $j->nama_jurusan }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Kelas</label>
+                        <div>
+                            @foreach ($kelas as $k)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="kelas-{{ $k->id }}" name="kelas[]" value="{{ $k->id }}">
+                                    <label class="form-check-label" for="kelas-{{ $k->id }}">
+                                        {{ $k->nama_kelas }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                   
+
+                <!-- Tombol Share -->
+                <div class="mt-4">
+                    <label class="form-label">Bagikan Pengumuman:</label>
+                    <div class="d-flex gap-2">
+                        <!-- Tombol Share ke Email -->
+                        <a href="mailto:?subject=Pengumuman&body=Judul: %0A%0AIsi Pengumuman: %0A%0A" 
+                            id="shareEmail" 
+                            class="btn btn-secondary btn-sm">
+                            Share ke Email
+                        </a>
+
+                        <!-- Tombol Share ke WhatsApp -->
+                        <a href="https://wa.me/?text=Judul:%0A%0AIsi Pengumuman:%0A%0A" 
+                            target="_blank" 
+                            id="shareWhatsapp" 
+                            class="btn btn-success btn-sm">
+                            Share ke WhatsApp
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
+
+
 
 
 <!-- JavaScript untuk Mengisi Data di Modal -->

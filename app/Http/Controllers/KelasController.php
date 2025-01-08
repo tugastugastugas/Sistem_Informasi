@@ -8,6 +8,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\ActivityLog;
 use App\Models\Kelas;
+use App\Models\Jurusan;
+use App\Models\Murid;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -36,11 +38,20 @@ class KelasController extends BaseController
                 'jurusan.nama_jurusan',
             )
             ->get();
+            
+        
+            $jurusan = Jurusan::all(); // Ambil semua data jurusan dari tabel
 
         echo view('header');
         echo view('menu');
-        echo view('kelas', compact('kelas'));
+        echo view('kelas', compact('kelas'), compact('jurusan'));
         echo view('footer');
+    }
+    
+    public function getMuridByKelas($id)
+    {
+        $murid = Murid::where('id_kelas', $id)->get();
+        return response()->json($murid);
     }
 
 
@@ -56,7 +67,6 @@ class KelasController extends BaseController
         try {
             $request->validate([
                 'nama_kelas' => 'required',
-                'nama_jurusan' => 'required',
             ]);
 
             // Mendapatkan id_user dari session
@@ -65,7 +75,7 @@ class KelasController extends BaseController
             // Simpan data ke tabel surat
             $kelas = new kelas();
             $kelas->nama_kelas = $request->input('nama_kelas');
-            $kelas->id_jurusan = $request->input('nama_jurusan');
+            $kelas->id_jurusan = $request->input('jurusan');
             $kelas->id_user = $id_user;
             // Simpan ke database
             $kelas->save();
@@ -92,7 +102,6 @@ class KelasController extends BaseController
         try {
         $request->validate([
             'nama_kelas' => 'required|string|max:255',
-            'nama_jurusan' => 'required|string|max:255',
         ]);
 
         // Cari pengumuman berdasarkan ID
@@ -100,7 +109,7 @@ class KelasController extends BaseController
         $id_user = Session::get('id');
         // Update data
         $kelas->nama_kelas = $request->nama_kelas;
-        $kelas->id_jurusan = $request->nama_jurusan;
+        $kelas->id_jurusan = $request->jurusan;
         $kelas->id_user = $id_user;
         $kelas->save();
         return redirect()->back()->with('success', 'Folder berhasil ditambahkan.');
@@ -129,4 +138,46 @@ class KelasController extends BaseController
         // Redirect dengan pesan sukses
         return redirect()->back()->with('success', 'Data user berhasil dihapus');
     }
+
+    public function murid_store(Request $request)
+    {
+        try {
+            $request->validate([
+                'id_kelas' => 'required|exists:kelas,id_kelas',
+                'nama_murid.*' => 'required|string|max:255',
+                'email_murid.*' => 'required|email',
+                'email_ortu.*' => 'required|email',
+                'nohp_murid.*' => 'required',
+                'nohp_ortu.*' => 'required',
+            ]);
+        
+            foreach ($request->nama_murid as $index => $namaMurid) {
+                Murid::create([
+                    'id_kelas' => $request->id_kelas,
+                    'nama_murid' => $namaMurid,
+                    'email_murid' => $request->email_murid[$index],
+                    'email_ortu' => $request->email_ortu[$index],
+                    'nohp_murid' => $request->nohp_murid[$index],
+                    'nohp_ortu' => $request->nohp_ortu[$index],
+                ]);
+            }
+
+        return redirect()->back()->with('success', 'Murid berhasil ditambahkan.');
+    } catch (\Exception $e) {
+        Log::error('Gagal menyimpan tes: ' . $e->getMessage());
+        return redirect()->route('view_kelas')->with('success', 'Pengumuman berhasil diperbarui.');
+    }
+    }
+    
+    public function hapusMurid($id)
+    {
+        $murid = Murid::find($id);
+    
+        if ($murid) {
+            $murid->delete();
+            
+            return redirect()->back()->with('success', 'Murid berhasil ditambahkan.');
+        }         
+    }
+    
 }
