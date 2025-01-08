@@ -3,10 +3,10 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Pengumuman Terpilih</h4>
+                    <h4 class="card-title">Kelas</h4>
                     <br>
                     <button type="button" class="btn btn-outline-primary kirim-surat" data-bs-toggle="modal" data-bs-target="#folderModal">
-                        Buat Pengumuman
+                        Buat Kelas
                     </button>
 
                 </div>
@@ -16,31 +16,26 @@
                     <table id="datatable" class="table table-striped" data-toggle="data-table">
                         <thead>
                             <tr>
-                                <th>Nama Pembuat</th>
-                                <th>Judul Pengumuman</th>
-                                <th>Kepada</th>
-                                <th>Tanggal Buat</th>
+                                <th>Nama Kelas</th>
+                                <th>Nama Jurusan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($pengumuman as $sm)
+                            @foreach($kelas as $sm)
                             <tr>
-                                <td>{{ $sm->username }}</td>
-                                <td>{{ $sm->judul_pengumuman_guru }}</td>
-                                <td>CONTOH</td>
-                                <td>{{ $sm->tgl_buat }}</td>
+                                <td>{{ $sm->nama_kelas }}</td>
+                                <td>{{ $sm->nama_jurusan }}</td>
                                 <td>
                                     <button type="button" class="btn btn-outline-secondary edit-barang"
                                         data-bs-toggle="modal" data-bs-target="#editModal"
-                                        data-id_pengumuman_guru="{{ $sm->id_pengumuman_guru }}"
-                                        data-isi_pengumuman="{{ $sm->isi_pengumuman }}"
-                                         data-judul_pengumuman_guru="{{ $sm->judul_pengumuman_guru }}">
+                                        data-id_kelas="{{ $sm->id_kelas }}"
+                                        data-id_jurusan="{{ $sm->id_jurusan }}"
+                                        data-nama_kelas="{{ $sm->nama_kelas }}"
+                                        data-nama_jurusan="{{ $sm->nama_jurusan }}">
                                         Detail
                                     </button>
-
-
-                                    <form action="{{ route('pengumuman_guru.destroy', $sm->id_pengumuman_guru) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('kelas.destroy', $sm->id_kelas) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-outline-danger btn-sm" type="submit">Hapus</button>
@@ -53,10 +48,8 @@
 
                         <tfoot>
                             <tr>
-                            <th>Nama Pembuat</th>
-                                <th>Judul Pengumuman</th>
-                                <td>Kepada</td>
-                                <th>Tanggal Buat</th>
+                            <th>Nama Kelas</th>
+                                <th>Nama Jurusan</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -71,19 +64,19 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="folderModalLabel">Buat Pengumuman</h5>
+                <h5 class="modal-title" id="folderModalLabel">Buat Kelas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('buat_pengumuman_guru') }}" method="POST" id="createForm">
+                <form action="{{ route('buat_kelas') }}" method="POST" id="createForm">
                     @csrf
                     <div class="mb-3">
-                        <label for="judul_pengumuman_guru" class="form-label">Judul Pengumuman</label>
-                        <input type="text" class="form-control" id="judul_pengumuman_guru" name="judul_pengumuman_guru" required>
+                        <label for="nama_kelas" class="form-label">Nama Kelas</label>
+                        <input type="text" class="form-control" id="nama_kelas" name="nama_kelas" required>
                     </div>
                     <div class="mb-3">
-                        <label for="isi_pengumuman" class="form-label">Isi Pengumuman</label>
-                        <input type="text" class="form-control" id="isi_pengumuman" name="isi_pengumuman" required>
+                        <label for="nama_jurusan" class="form-label">Nama Jurusan</label>
+                        <input type="text" class="form-control" id="nama_jurusan" name="nama_jurusan" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
@@ -97,7 +90,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Pengumuman</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Kelas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -105,14 +98,14 @@
                     @csrf
                     @method('PUT')
                     <!-- Ganti GET dengan POST -->
-                    <input type="hidden" name="id_pengumuman_guru" id="edit-id_pengumuman_guru">
+                    <input type="hidden" name="id_kelas" id="edit-id_kelas">
                     <div class="mb-3">
-                        <label for="edit-judul_pengumuman_guru" class="form-label">Judul Pengumuman</label>
-                        <input type="text" class="form-control" id="edit-judul_pengumuman_guru" name="judul_pengumuman_guru" required>
+                        <label for="edit-nama_kelas" class="form-label">Nama Kelas</label>
+                        <input type="text" class="form-control" id="edit-nama_kelas" name="nama_kelas" required>
                     </div>
                     <div class="mb-3">
-                        <label for="edit-isi_pengumuman" class="form-label">Isi Pengumuman</label>
-                        <input type="text" class="form-control" id="edit-isi_pengumuman" name="isi_pengumuman" required>
+                        <label for="edit-nama_jurusan" class="form-label">Nama Jurusan</label>
+                        <input type="text" class="form-control" id="edit-nama_jurusan" name="nama_jurusan" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
@@ -132,16 +125,7 @@
     function openModal() {
         // Reset form sebelum membuka modal
         $('#editForm')[0].reset();
-        
-        // Atur tanggal otomatis hari ini
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
-
-        today = yyyy + '-' + mm + '-' + dd;
-        $('#tgl_buat').val(today);
-
+    
         // Buka modal
         $('#folderModal').modal('show');
     }
@@ -154,7 +138,7 @@
         var formData = new FormData(this);
 
         $.ajax({
-            url: '{{ route("buat_pengumuman_guru") }}', // Sesuaikan dengan route yang benar
+            url: '{{ route("buat_kelas") }}', // Sesuaikan dengan route yang benar
             type: 'POST',
             data: formData,
             contentType: false,
@@ -213,16 +197,17 @@
    
     $(document).on('click', '.edit-barang', function() {
         // Ambil data dari atribut tombol Edit
-        let id_pengumuman_guru = $(this).data('id_pengumuman_guru');
-        let judul_pengumuman_guru = $(this).data('judul_pengumuman_guru');
-        let isi_pengumuman = $(this).data('isi_pengumuman');
+        let id_jurusan = $(this).data('id_jurusan');
+        let id_kelas = $(this).data('id_kelas');
+        let nama_jurusan = $(this).data('nama_jurusan');
+        let nama_kelas = $(this).data('nama_kelas');
 
         // Set nilai form action untuk edit
-        $('#editForm').attr('action', '{{ route("pengumuman_guru.update", ":id") }}'.replace(':id', id_pengumuman_guru));
+        $('#editForm').attr('action', '{{ route("kelas.update", ":id") }}'.replace(':id', id_kelas));
 
         // Isi nilai input di modal edit dengan id yang benar
-        $('#edit-judul_pengumuman_guru').val(judul_pengumuman_guru);
-        $('#edit-isi_pengumuman').val(isi_pengumuman);
+        $('#edit-nama_jurusan').val(nama_jurusan);
+        $('#edit-nama_kelas').val(nama_kelas);
     });
 
 </script>

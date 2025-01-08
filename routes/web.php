@@ -12,6 +12,8 @@ use App\Http\Controllers\RestoreEditController;
 use App\Http\Controllers\RestoreDeleteController;
 use App\Http\Controllers\PengumumanSekolahController;
 use App\Http\Controllers\PengumumanGuruController;
+use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\KelasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,7 +86,7 @@ Route::get('/user/detail/{id}', [UserController::class, 'detail'])->name('detail
 
 // ROUTE PENGUMUMAN SEKOLAH
 Route::get('/pengumuman_umum', [PengumumanSekolahController::class, 'pengumuman_sekolah'])->name('pengumuman_umum');
-Route::get('buat_pengumuman', [PengumumanSekolahController::class, 'buat_pengumuman'])
+Route::post('buat_pengumuman', [PengumumanSekolahController::class, 'buat_pengumuman'])
     ->name('buat_pengumuman');
 Route::put('/pengumuman_sekolah/update/{id}', [PengumumanSekolahController::class, 'update'])->name('pengumuman_sekolah.update'); // Pastikan ini ada
 Route::delete('/pengumuman_sekolah/{id_pengumuman_sekolah}', [PengumumanSekolahController::class, 'pengumuman_sekolah_destroy'])->name('pengumuman_sekolah.destroy');
@@ -96,3 +98,19 @@ Route::post('buat_pengumuman_guru', [PengumumanGuruController::class, 'buat_peng
     ->name('buat_pengumuman_guru');
 Route::put('/pengumuman_guru/update/{id}', [PengumumanGuruController::class, 'update'])->name('pengumuman_guru.update'); // Pastikan ini ada
 Route::delete('/pengumuman_guru/{id_pengumuman_guru}', [PengumumanGuruController::class, 'pengumuman_guru_destroy'])->name('pengumuman_guru.destroy');
+
+
+// ROUTE Jurusan
+Route::get('/view_jurusan', [JurusanController::class, 'view_jurusan'])->name('view_jurusan');
+Route::post('buat_jurusan', [JurusanController::class, 'buat_jurusan'])
+    ->name('buat_jurusan');
+Route::put('/jurusan/update/{id}', [JurusanController::class, 'update'])->name('jurusan.update'); // Pastikan ini ada
+Route::delete('/jurusan/{id_jurusan}', [JurusanController::class, 'jurusan_destroy'])->name('jurusan.destroy');
+
+
+// ROUTE Kelas
+Route::get('/view_kelas', [KelasController::class, 'view_kelas'])->name('view_kelas');
+Route::post('buat_kelas', [KelasController::class, 'buat_kelas'])
+    ->name('buat_kelas');
+Route::put('/kelas/update/{id}', [KelasController::class, 'update'])->name('kelas.update'); // Pastikan ini ada
+Route::delete('/kelas/{id_kelas}', [KelasController::class, 'kelas_destroy'])->name('kelas.destroy');

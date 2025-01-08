@@ -223,23 +223,9 @@ $userLevel =session()->get('level'); // Sesuaikan dengan cara Anda menyimpan lev
                                 <span class="item-name">Pengumuman Terpilih</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> K </i>
-                                <span class="item-name">Surat Keluar</span>
-                            </a>
-                        </li>
                     </ul>
                 </li>
                
-                @if(Permission::hasAccess($userLevel, 'dokumen'))
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-auth" role="button" aria-expanded="false" aria-controls="sidebar-user">
                         <i class="icon">
@@ -248,7 +234,7 @@ $userLevel =session()->get('level'); // Sesuaikan dengan cara Anda menyimpan lev
                                 <path d="M11.3194 14.3209C11.1261 14.3219 10.9328 14.2523 10.7838 14.1091L8.86695 12.2656C8.57097 11.9793 8.56795 11.5145 8.86091 11.2262C9.15387 10.9369 9.63207 10.934 9.92906 11.2193L11.3083 12.5451L14.6758 9.22479C14.9698 8.93552 15.448 8.93258 15.744 9.21793C16.041 9.50426 16.044 9.97004 15.751 10.2574L11.8519 14.1022C11.7049 14.2474 11.5127 14.3199 11.3194 14.3209Z" fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Dokumen</span>
+                        <span class="item-name">Pengaturan</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -257,7 +243,7 @@ $userLevel =session()->get('level'); // Sesuaikan dengan cara Anda menyimpan lev
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-auth" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{{route ('view_jurusan')}}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
                                         <g>
@@ -266,12 +252,25 @@ $userLevel =session()->get('level'); // Sesuaikan dengan cara Anda menyimpan lev
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> L </i>
-                                <span class="item-name">Folder</span>
+                                <span class="item-name">Jurusan</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route ('view_kelas')}}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> L </i>
+                                <span class="item-name">Kelas</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                @endif
+                
                 @if(Permission::hasAccess($userLevel, 'pengajuan'))
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-user" role="button" aria-expanded="false" aria-controls="sidebar-user">
