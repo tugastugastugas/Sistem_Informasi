@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 
 class JurusanController extends BaseController
 {
@@ -61,7 +61,7 @@ class JurusanController extends BaseController
             // Simpan data ke tabel surat
             $jurusan = new Jurusan();
             $jurusan->nama_jurusan = $request->input('nama_jurusan');
-           
+
             // Simpan ke database
             $jurusan->save();
 
@@ -76,7 +76,7 @@ class JurusanController extends BaseController
         }
     }
 
-     public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         ActivityLog::create([
             'action' => 'create',
@@ -85,21 +85,21 @@ class JurusanController extends BaseController
         ]);
         // Validasi input
         try {
-        $request->validate([
-            'nama_jurusan' => 'required|string|max:255',
-        ]);
+            $request->validate([
+                'nama_jurusan' => 'required|string|max:255',
+            ]);
 
-        // Cari pengumuman berdasarkan ID
-        $jurusan = Jurusan::findOrFail($id);
+            // Cari pengumuman berdasarkan ID
+            $jurusan = Jurusan::findOrFail($id);
 
-        // Update data
-        $jurusan->nama_jurusan = $request->nama_jurusan;
-        $jurusan->save();
-        return redirect()->back()->with('success', 'Folder berhasil ditambahkan.');
-        
+            // Update data
+            $jurusan->nama_jurusan = $request->nama_jurusan;
+            $jurusan->save();
+            return redirect()->back()->with('success', 'Folder berhasil ditambahkan.');
+
         } catch (\Exception $e) {
             Log::error('Gagal menyimpan surat: ' . $e->getMessage());
-        return redirect()->route('view_jurusan')->with('success', 'Pengumuman berhasil diperbarui.');
+            return redirect()->route('view_jurusan')->with('success', 'Pengumuman berhasil diperbarui.');
         }
     }
 

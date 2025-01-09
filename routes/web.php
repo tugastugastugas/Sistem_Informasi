@@ -121,3 +121,6 @@ Route::delete('/murid/{id}/hapus', [KelasController::class, 'hapusMurid'])->name
 
 // ROUTE SHARE
 Route::post('/send-email', [PengumumanSekolahController::class, 'sendEmail']);
+Route::post('/send-email-guru', [PengumumanGuruController::class, 'sendEmail']);
+
+Route::post('/send-whatsapp', [PengumumanSekolahController::class, 'sendWhatsapp']);

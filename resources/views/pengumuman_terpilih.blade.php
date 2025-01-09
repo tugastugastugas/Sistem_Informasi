@@ -86,10 +86,7 @@
                         <label for="isi_pengumuman" class="form-label">Isi Pengumuman</label>
                         <input type="text" class="form-control" id="isi_pengumuman" name="isi_pengumuman" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="file_pengumuman_guru" class="form-label">File Pengumuman</label>
-                        <input type="file" class="form-control" id="file_pengumuman_guru" name="file_pengumuman_guru">
-                    </div>
+                    
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
             </div>
@@ -134,8 +131,8 @@
                         <div>
                             @foreach ($jurusan as $j)
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="jurusan-{{ $j->id }}" name="jurusan[]" value="{{ $j->id }}">
-                                    <label class="form-check-label" for="jurusan-{{ $j->id }}">
+                                    <input class="form-check-input" type="checkbox" id="jurusan-{{ $j->id_jurusan }}" name="jurusan[]" value="{{ $j->id_jurusan }}">
+                                    <label class="form-check-label" for="jurusan-{{ $j->id_jurusan }}">
                                         {{ $j->nama_jurusan }}
                                     </label>
                                 </div>
@@ -148,8 +145,8 @@
                         <div>
                             @foreach ($kelas as $k)
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="kelas-{{ $k->id }}" name="kelas[]" value="{{ $k->id }}">
-                                    <label class="form-check-label" for="kelas-{{ $k->id }}">
+                                    <input class="form-check-input" type="checkbox" id="kelas-{{ $k->id_kelas }}" name="kelas[]" value="{{ $k->id_kelas }}">
+                                    <label class="form-check-label" for="kelas-{{ $k->id_kelas }}">
                                         {{ $k->nama_kelas }}
                                     </label>
                                 </div>
@@ -162,9 +159,7 @@
                     <label class="form-label">Bagikan Pengumuman:</label>
                     <div class="d-flex gap-2">
                         <!-- Tombol Share ke Email -->
-                        <a href="mailto:?subject=Pengumuman&body=Judul: %0A%0AIsi Pengumuman: %0A%0A" 
-                            id="shareEmail" 
-                            class="btn btn-secondary btn-sm">
+                        <a href="#" id="shareEmail" class="btn btn-secondary btn-sm" onclick="sendEmail()">
                             Share ke Email
                         </a>
 
@@ -304,5 +299,67 @@
         $('#file-download-container').html('Tidak ada file.');
     }
     });
+
+</script>
+
+<script>
+    function sendEmail() {
+    const jurusan = [];
+    const kelas = [];
+
+    // Ambil jurusan yang dipilih
+    document.querySelectorAll('input[name="jurusan[]"]:checked').forEach((checkbox) => {
+        jurusan.push(checkbox.value);
+    });
+
+    // Ambil kelas yang dipilih
+    document.querySelectorAll('input[name="kelas[]"]:checked').forEach((checkbox) => {
+        kelas.push(checkbox.value);
+    });
+
+    // Ambil elemen form
+    const formData = new FormData();
+    formData.append('judul_pengumuman_guru', document.getElementById('edit-judul_pengumuman_guru').value);
+    formData.append('isi_pengumuman', document.getElementById('edit-isi_pengumuman').value);
+
+    // Tambahkan file jika ada
+    const fileInput = document.getElementById('edit-file_pengumuman_guru');
+    if (fileInput.files[0]) {
+        formData.append('file_pengumuman_guru', fileInput.files[0]);
+    }
+
+    // Tambahkan jurusan dan kelas
+    jurusan.forEach((id) => formData.append('jurusan[]', id));
+    kelas.forEach((id) => formData.append('kelas[]', id));
+
+    // Kirim request
+    fetch('/send-email-guru', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        },
+        body: formData,
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error('Failed to send email.');
+        }
+        return response.json();
+    })
+    .then((data) => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Email berhasil dikirim.',
+        });
+    })
+    .catch((error) => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Terjadi kesalahan saat mengirim email.',
+        });
+    });
+}
 
 </script>

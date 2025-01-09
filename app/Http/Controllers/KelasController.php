@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 
 class KelasController extends BaseController
 {
@@ -29,7 +29,7 @@ class KelasController extends BaseController
         ]);
 
         $kelas = DB::table('kelas')
-        ->join('jurusan', 'jurusan.id_jurusan', '=', 'kelas.id_jurusan')
+            ->join('jurusan', 'jurusan.id_jurusan', '=', 'kelas.id_jurusan')
             ->select(
                 'kelas.id_kelas',
                 'kelas.nama_kelas',
@@ -38,16 +38,16 @@ class KelasController extends BaseController
                 'jurusan.nama_jurusan',
             )
             ->get();
-            
-        
-            $jurusan = Jurusan::all(); // Ambil semua data jurusan dari tabel
+
+
+        $jurusan = Jurusan::all(); // Ambil semua data jurusan dari tabel
 
         echo view('header');
         echo view('menu');
         echo view('kelas', compact('kelas'), compact('jurusan'));
         echo view('footer');
     }
-    
+
     public function getMuridByKelas($id)
     {
         $murid = Murid::where('id_kelas', $id)->get();
@@ -91,7 +91,7 @@ class KelasController extends BaseController
         }
     }
 
-     public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         ActivityLog::create([
             'action' => 'create',
@@ -100,23 +100,23 @@ class KelasController extends BaseController
         ]);
         // Validasi input
         try {
-        $request->validate([
-            'nama_kelas' => 'required|string|max:255',
-        ]);
+            $request->validate([
+                'nama_kelas' => 'required|string|max:255',
+            ]);
 
-        // Cari pengumuman berdasarkan ID
-        $kelas = Kelas::findOrFail($id);
-        $id_user = Session::get('id');
-        // Update data
-        $kelas->nama_kelas = $request->nama_kelas;
-        $kelas->id_jurusan = $request->jurusan;
-        $kelas->id_user = $id_user;
-        $kelas->save();
-        return redirect()->back()->with('success', 'Folder berhasil ditambahkan.');
-  
+            // Cari pengumuman berdasarkan ID
+            $kelas = Kelas::findOrFail($id);
+            $id_user = Session::get('id');
+            // Update data
+            $kelas->nama_kelas = $request->nama_kelas;
+            $kelas->id_jurusan = $request->jurusan;
+            $kelas->id_user = $id_user;
+            $kelas->save();
+            return redirect()->back()->with('success', 'Folder berhasil ditambahkan.');
+
         } catch (\Exception $e) {
             Log::error('Gagal menyimpan tes: ' . $e->getMessage());
-        return redirect()->route('view_kelas')->with('success', 'Pengumuman berhasil diperbarui.');
+            return redirect()->route('view_kelas')->with('success', 'Pengumuman berhasil diperbarui.');
         }
     }
 
@@ -150,7 +150,7 @@ class KelasController extends BaseController
                 'nohp_murid.*' => 'required',
                 'nohp_ortu.*' => 'required',
             ]);
-        
+
             foreach ($request->nama_murid as $index => $namaMurid) {
                 Murid::create([
                     'id_kelas' => $request->id_kelas,
@@ -162,22 +162,22 @@ class KelasController extends BaseController
                 ]);
             }
 
-        return redirect()->back()->with('success', 'Murid berhasil ditambahkan.');
-    } catch (\Exception $e) {
-        Log::error('Gagal menyimpan tes: ' . $e->getMessage());
-        return redirect()->route('view_kelas')->with('success', 'Pengumuman berhasil diperbarui.');
+            return redirect()->back()->with('success', 'Murid berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            Log::error('Gagal menyimpan tes: ' . $e->getMessage());
+            return redirect()->route('view_kelas')->with('success', 'Pengumuman berhasil diperbarui.');
+        }
     }
-    }
-    
+
     public function hapusMurid($id)
     {
         $murid = Murid::find($id);
-    
+
         if ($murid) {
             $murid->delete();
-            
+
             return redirect()->back()->with('success', 'Murid berhasil ditambahkan.');
-        }         
+        }
     }
-    
+
 }
