@@ -282,60 +282,87 @@ class PengumumanSekolahController extends BaseController
     }
 
     public function sendWhatsapp(Request $request)
-    {
-        // Ambil data dari request
-        $judul = $request->input('judul_pengumuman_sekolah');
-        $isi = $request->input('isi_pengumuman');
-        $whatsappNumbers = ['+6281363613838', '+6281363613838']; // Contoh nomor
+{
+    // Ambil data dari request
+    $judul = $request->input('judul_pengumuman_sekolah');
+    $isi = $request->input('isi_pengumuman');
 
-        // Loop untuk mengirim pesan ke setiap nomor
-        foreach ($whatsappNumbers as $number) {
-            $message = "Judul: {$judul}\nIsi Pengumuman: {$isi}";
-            $params = [
-                'token' => '9njb7wu00cb8woas',
-                'to' => $number,
-                'body' => $message,
-                'priority' => '1',
-                'referenceId' => '',
-                'msgId' => '',
-                'mentions' => ''
-            ];
+    // Query untuk mengambil nomor dari tabel users dan murid
+    $usersNumbers = DB::table('user')->pluck('no_hp')->toArray();
+    $muridNumbers = DB::table('murid')
+        ->select('nohp_murid', 'nohp_ortu')
+        ->get()
+        ->flatMap(function ($row) {
+            return [$row->nohp_murid, $row->nohp_ortu];
+        })
+        ->toArray();
 
-            // Setup cURL
-            $ch = curl_init();
-            curl_setopt_array($ch, [
-                CURLOPT_URL => "https://api.ultramsg.com/instance103566/messages/chat",
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_SSL_VERIFYHOST => 0,
-                CURLOPT_SSL_VERIFYPEER => 0,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => http_build_query($params),
-                CURLOPT_HTTPHEADER => [
-                    "content-type: application/x-www-form-urlencoded"
-                ],
-            ]);
+    // Gabungkan semua nomor dan filter nomor yang valid
+    $allNumbers = array_merge($usersNumbers, $muridNumbers);
+    $whatsappNumbers = array_filter(array_map([$this, 'formatWhatsappNumber'], $allNumbers));
 
-            // Eksekusi cURL
-            $response = curl_exec($ch);
-            $err = curl_error($ch);
+    // Loop untuk mengirim pesan ke setiap nomor
+    foreach ($whatsappNumbers as $number) {
+        // Persiapkan pesan
+        $message = "Judul: {$judul}\nIsi Pengumuman: {$isi}";
+        $params = [
+            'token' => '9njb7wu00cb8woas',
+            'to' => $number, // Gunakan nomor yang sudah diformat
+            'body' => $message,
+            'priority' => '1',
+            'referenceId' => '',
+            'msgId' => '',
+            'mentions' => ''
+        ];
 
-            // Tutup cURL
-            curl_close($ch);
+        // Eksekusi cURL
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => "https://api.ultramsg.com/instance103566/messages/chat",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => http_build_query($params),
+            CURLOPT_HTTPHEADER => [
+                "content-type: application/x-www-form-urlencoded"
+            ],
+        ]);
 
-            // Log atau tampilkan respon
-            if ($err) {
-                Log::error("cURL Error #: " . $err);
-            } else {
-                Log::info("Respon dari API: " . $response);
-            }
+        $response = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        // Log hasil
+        if ($err) {
+            Log::error("cURL Error #: " . $err);
+        } else {
+            Log::info("Respon dari API: " . $response);
         }
-
-        return response()->json(['status' => 'success']);
+        Log::info("Nomor yang dikirim ke WhatsApp API: " . $number);
     }
+
+    return response()->json(['status' => 'success']);
+}
+
+// Fungsi untuk memformat nomor ke format internasional
+private function formatWhatsappNumber($number) {
+    // Hapus karakter non-digit
+    $number = preg_replace('/\D/', '', $number);
+
+    // Tambahkan kode negara jika hilang
+    if (substr($number, 0, 1) === '0') {
+        $number = '62' . substr($number, 1); // Ganti 0 di awal dengan 62
+    }
+
+    // Tambahkan suffix untuk WhatsApp API
+    return $number . '@c.us';
+}
+
 
 
 

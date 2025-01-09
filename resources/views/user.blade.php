@@ -84,6 +84,10 @@
                         <input type="text" class="form-control" id="email" name="email" required>
                     </div>
                     <div class="mb-3">
+                        <label for="no_hp" class="form-label">NoHp</label>
+                        <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="level" class="form-label">Level</label>
                         <select class="form-select" id="level" name="level" required>
                             <option value="Admin">Admin</option>

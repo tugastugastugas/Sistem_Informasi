@@ -124,3 +124,4 @@ Route::post('/send-email', [PengumumanSekolahController::class, 'sendEmail']);
 Route::post('/send-email-guru', [PengumumanGuruController::class, 'sendEmail']);
 
 Route::post('/send-whatsapp', [PengumumanSekolahController::class, 'sendWhatsapp']);
+Route::post('/send-whatsapp-guru', [PengumumanGuruController::class, 'sendWhatsapp']);

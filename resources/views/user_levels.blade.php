@@ -5,9 +5,8 @@
                 <div class="container">
                     <h1>Select User Level</h1>
                     <div class="button-group">
-                        <a href="{{ route('menu.permissions', 'Admin') }}" class="btn btn-primary">Admin</a>
-                        <a href="{{ route('menu.permissions', 'Kepsek') }}" class="btn btn-secondary">Kepsek</a>
-                        <a href="{{ route('menu.permissions', 'Kesiswaan') }}" class="btn btn-info">Kesiswaan</a>
+                        <a href="{{ route('menu.permissions', 'Kepsek') }}" class="btn btn-primary">Kepsek</a>
+                        <a href="{{ route('menu.permissions', 'Wakil') }}" class="btn btn-secondary">Wakil</a>
                         <a href="{{ route('menu.permissions', 'Guru') }}" class="btn btn-gray">Guru</a>
                     </div>
                 </div>

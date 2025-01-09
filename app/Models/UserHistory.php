@@ -24,6 +24,7 @@ class UserHistory extends Authenticatable
         'updated_at',
         'level',
         'email',
+        'no_hp',
     ];
 
     protected $hidden = [

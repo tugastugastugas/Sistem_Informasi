@@ -120,12 +120,12 @@
                                                     <input type="password" class="form-control" name="password" id="password" placeholder=" ">
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-lg-6">
+                                            <div class="col-lg-6">
                                                 <div class="form-group">
-                                                    <label for="confirm-password" class="form-label">Confirm Password</label>
-                                                    <input type="text" class="form-control" id="confirm-password" placeholder=" ">
+                                                    <label for="no_hp" class="form-label">Nomor Hp</label>
+                                                    <input type="text" class="form-control" id="no_hp" name="no_hp" placeholder="">
                                                 </div>
-                                            </div> -->
+                                            </div>
                                             <div class="col-lg-12 d-flex justify-content-center">
                                                 <div class="form-check mb-3">
                                                     <input type="checkbox" class="form-check-input" id="customCheck1">
@@ -154,7 +154,7 @@
                                             </ul>
                                         </div>
                                         <p class="mt-3 text-center">
-                                            Already have an Account <a href="sign-in.html" class="text-underline">Sign In</a>
+                                            Already have an Account <a href="{{route ('login')}}" class="text-underline">Sign In</a>
                                         </p>
                                     </form>
                                 </div>

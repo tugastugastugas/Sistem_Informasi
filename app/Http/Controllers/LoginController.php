@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request; // Tambahkan ini
 use App\Models\User;
+use App\Models\Permission;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
 
@@ -91,13 +92,18 @@ class LoginController extends Controller
             $request->validate([
                 'username' => 'required',
                 'password' => 'required',
+                'email' => 'required',
+                'no_hp' => 'required',
             ]);
 
             // Simpan data ke tabel user
             $user = new User(); // Ubah variabel dari $quiz menjadi $user untuk kejelasan
+            $permission = new Permission();
             $user->username = $request->input('username');
             $user->password = md5($request->input('password')); // Enkripsi password
-            $user->level = 'User'; // Tetapkan level ke "Murid"
+            $user->email = $request->input('email');
+            $user->no_hp = $request->input('no_hp');
+            $user->level = 'Guru'; // Tetapkan level ke "Murid"
 
             // Simpan ke database
             $user->save();

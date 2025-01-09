@@ -164,11 +164,8 @@
                         </a>
 
                         <!-- Tombol Share ke WhatsApp -->
-                        <a href="https://wa.me/?text=Judul:%0A%0AIsi Pengumuman:%0A%0A" 
-                            target="_blank" 
-                            id="shareWhatsapp" 
-                            class="btn btn-success btn-sm">
-                            Share ke WhatsApp
+                        <a href="#" id="shareWhatsapp" class="btn btn-success btn-sm">
+                                Share ke WhatsApp
                         </a>
                     </div>
                 </div>
@@ -361,5 +358,45 @@
         });
     });
 }
+
+</script>
+
+<script>
+     $('#shareWhatsapp').click(function () {
+    let id_pengumuman_guru = $('#edit-id_pengumuman_guru').val();
+    let judul_pengumuman_guru = $('#edit-judul_pengumuman_guru').val();
+    let isi_pengumuman = $('#edit-isi_pengumuman').val();
+
+    // Ambil jurusan dan kelas yang dipilih
+    let selectedJurusan = [];
+    $('input[name="jurusan[]"]:checked').each(function () {
+        selectedJurusan.push($(this).val());
+    });
+
+    let selectedKelas = [];
+    $('input[name="kelas[]"]:checked').each(function () {
+        selectedKelas.push($(this).val());
+    });
+
+    // Kirim permintaan ke controller untuk mengirim pesan WhatsApp
+    $.ajax({
+        url: '/send-whatsapp-guru',
+        method: 'POST',
+        data: {
+            id_pengumuman_guru: id_pengumuman_guru,
+            judul_pengumuman_guru: judul_pengumuman_guru,
+            isi_pengumuman: isi_pengumuman,
+            jurusan: selectedJurusan,
+            kelas: selectedKelas,
+            _token: '{{ csrf_token() }}' // Pastikan CSRF token disertakan
+        },
+        success: function (response) {
+            alert('Pesan WhatsApp berhasil dikirim!');
+        },
+        error: function (xhr, status, error) {
+            alert('Terjadi kesalahan saat mengirim pesan WhatsApp');
+        }
+    });
+});
 
 </script>

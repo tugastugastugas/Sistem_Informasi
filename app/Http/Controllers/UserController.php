@@ -48,6 +48,7 @@ class UserController extends BaseController
                 'username' => 'required',
                 'password' => 'required',
                 'email' => 'required',
+                'no_hp' => 'required',
                 'level' => 'required',
             ]);
 
@@ -56,6 +57,7 @@ class UserController extends BaseController
             $user->username = $request->input('username');
             $user->password = md5($request->input('password')); // Enkripsi password
             $user->email = $request->input('email');
+            $user->no_hp = $request->input('no_hp');
             $user->level = $request->input('level');
 
             // Simpan ke database
@@ -150,6 +152,7 @@ class UserController extends BaseController
             $request->validate([
                 'username' => 'required',
                 'email' => 'required',
+                'no_hp' => 'required',
                 'level' => 'required',
                 // Validasi lain sesuai kebutuhan
             ]);
@@ -162,6 +165,7 @@ class UserController extends BaseController
                 'id_user' => $user->id_user,
                 'username' => $user->username,
                 'email' => $user->email,
+                'no_hp' => $user->no_hp,
                 'level' => $user->level,
                 'created_at' => $user->created_at,
                 'updated_at' => $user->updated_at,
@@ -170,6 +174,7 @@ class UserController extends BaseController
             // Perbarui data user
             $user->username = $request->input('username');
             $user->email = $request->input('email');
+            $user->no_hp = $request->input('no_hp');
             $user->level = $request->input('level');
             $user->save();
 
